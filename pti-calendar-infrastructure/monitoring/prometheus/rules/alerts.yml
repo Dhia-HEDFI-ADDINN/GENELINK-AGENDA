@@ -1,0 +1,213 @@
+# PTI Calendar - Prometheus Alerting Rules
+groups:
+  # Service Health Alerts
+  - name: service_health
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} has been down for more than 1 minute."
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(pti_http_requests_total{status=~"5.."}[5m])) by (job)
+          / sum(rate(pti_http_requests_total[5m])) by (job) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate on {{ $labels.job }}"
+          description: "Error rate is {{ $value | printf \"%.2f\" }}% on {{ $labels.job }}"
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99, sum(rate(pti_http_request_duration_seconds_bucket[5m])) by (job, le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency on {{ $labels.job }}"
+          description: "P99 latency is {{ $value | printf \"%.2f\" }}s on {{ $labels.job }}"
+
+  # Database Alerts
+  - name: database
+    rules:
+      - alert: DatabaseConnectionPoolExhausted
+        expr: pti_db_pool_connections{state="available"} < 5
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection pool exhausted on {{ $labels.job }}"
+          description: "Only {{ $value }} connections available in pool"
+
+      - alert: SlowDatabaseQueries
+        expr: |
+          histogram_quantile(0.95, sum(rate(pti_db_query_duration_seconds_bucket[5m])) by (job, le)) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow database queries on {{ $labels.job }}"
+          description: "P95 query duration is {{ $value | printf \"%.2f\" }}s"
+
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database is not responding"
+
+      - alert: PostgresHighConnections
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High PostgreSQL connection count"
+          description: "{{ $value }} active connections (threshold: 80)"
+
+  # Redis Alerts
+  - name: redis
+    rules:
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache is not responding"
+
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Redis memory usage"
+          description: "Redis memory usage is {{ $value | printf \"%.2f\" }}%"
+
+      - alert: RedisCacheHitRateLow
+        expr: |
+          rate(redis_keyspace_hits_total[5m])
+          / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) < 0.8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low Redis cache hit rate"
+          description: "Cache hit rate is {{ $value | printf \"%.2f\" }}%"
+
+  # Kafka Alerts
+  - name: kafka
+    rules:
+      - alert: KafkaConsumerLag
+        expr: kafka_consumergroup_lag > 10000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Kafka consumer lag"
+          description: "Consumer group {{ $labels.consumergroup }} has lag of {{ $value }}"
+
+      - alert: KafkaBrokerDown
+        expr: kafka_brokers < 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka broker down"
+          description: "No Kafka brokers available"
+
+  # Business Metrics Alerts
+  - name: business
+    rules:
+      - alert: HighRdvCancellationRate
+        expr: |
+          sum(rate(pti_rdv_cancelled_total[1h]))
+          / sum(rate(pti_rdv_created_total[1h])) > 0.2
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High RDV cancellation rate"
+          description: "{{ $value | printf \"%.2f\" }}% of RDVs are being cancelled"
+
+      - alert: PaymentFailureSpike
+        expr: |
+          sum(rate(pti_payments_total{status="failed"}[15m]))
+          / sum(rate(pti_payments_total[15m])) > 0.1
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High payment failure rate"
+          description: "{{ $value | printf \"%.2f\" }}% of payments are failing"
+
+      - alert: NoRdvCreated
+        expr: sum(increase(pti_rdv_created_total[1h])) == 0
+        for: 2h
+        labels:
+          severity: warning
+        annotations:
+          summary: "No RDV created in the last hour"
+          description: "No new appointments have been created in the last hour during business hours"
+
+  # Security Alerts
+  - name: security
+    rules:
+      - alert: HighFailedLoginRate
+        expr: sum(rate(pti_audit_failed_logins[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High failed login rate"
+          description: "{{ $value | printf \"%.2f\" }} failed logins per second"
+
+      - alert: SuspiciousActivityDetected
+        expr: pti_audit_events_by_action{action="PERMISSION_DENIED"} > 50
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Suspicious activity detected"
+          description: "High number of permission denied events"
+
+  # System Resources Alerts
+  - name: system
+    rules:
+      - alert: HighMemoryUsage
+        expr: pti_process_memory_bytes{type="rss"} / 1024 / 1024 / 1024 > 1.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.job }}"
+          description: "Memory usage is {{ $value | printf \"%.2f\" }}GB"
+
+      - alert: ContainerMemoryExhausted
+        expr: |
+          container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container memory nearly exhausted"
+          description: "Container {{ $labels.name }} is using {{ $value | printf \"%.2f\" }}% of memory limit"
+
+      - alert: DiskSpaceLow
+        expr: node_filesystem_avail_bytes / node_filesystem_size_bytes < 0.1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space"
+          description: "Only {{ $value | printf \"%.2f\" }}% disk space available"

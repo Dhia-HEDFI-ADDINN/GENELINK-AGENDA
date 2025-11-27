@@ -4,6 +4,7 @@ import {
   ConflictException,
   BadRequestException,
   Inject,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, Like, In } from 'typeorm';
@@ -22,6 +23,13 @@ import {
   RdvStatsDto,
 } from '../application/dto/rdv.dto';
 import { KafkaProducerService } from '../infrastructure/kafka/kafka-producer.service';
+import {
+  AuditClient,
+  AuditContext,
+  AuditAction,
+  AuditCategory,
+  AuditSeverity,
+} from '@pti-calendar/shared-utils';
 
 // Matrices de durées de contrôle
 const DUREES_CONTROLE: Record<string, Record<string, Record<string, number>>> = {
@@ -57,6 +65,9 @@ const DUREES_CONTROLE: Record<string, Record<string, Record<string, number>>> = 
 
 @Injectable()
 export class RdvService {
+  private readonly logger = new Logger(RdvService.name);
+  private readonly auditClient: AuditClient;
+
   constructor(
     @InjectRepository(Rdv)
     private readonly rdvRepository: Repository<Rdv>,
@@ -65,7 +76,12 @@ export class RdvService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly kafkaProducer: KafkaProducerService,
-  ) {}
+  ) {
+    this.auditClient = new AuditClient('rdv-service');
+    this.auditClient.connect().catch((err) => {
+      this.logger.warn('Failed to connect audit client', err);
+    });
+  }
 
   async create(dto: CreateRdvDto, tenantId: string, userId?: string): Promise<Rdv> {
     // Calculer la durée du contrôle
@@ -123,6 +139,19 @@ export class RdvService {
       type_controle: dto.type_controle,
       immatriculation: dto.immatriculation,
     });
+
+    // Audit logging
+    await this.auditClient.logRdvCreated(
+      { tenant_id: tenantId, user_id: userId, centre_id: dto.centre_id },
+      savedRdv.id,
+      {
+        date: dto.date,
+        heure_debut: dto.heure_debut,
+        type_controle: dto.type_controle,
+        immatriculation: dto.immatriculation,
+        client_email: dto.client_email,
+      },
+    );
 
     return savedRdv;
   }
@@ -410,6 +439,13 @@ export class RdvService {
       client_email: rdv.client_email,
     });
 
+    // Audit logging
+    await this.auditClient.logRdvCancelled(
+      { tenant_id: tenantId, user_id: userId, centre_id: rdv.centre_id },
+      savedRdv.id,
+      dto.motif,
+    );
+
     return savedRdv;
   }
 
@@ -433,6 +469,14 @@ export class RdvService {
       tenant_id: tenantId,
       controleur_id: rdv.controleur_id,
     });
+
+    // Audit logging
+    await this.auditClient.logRdvStatusChange(
+      { tenant_id: tenantId, user_id: userId, centre_id: rdv.centre_id },
+      savedRdv.id,
+      'started',
+      { controleur_id: rdv.controleur_id },
+    );
 
     return savedRdv;
   }
@@ -479,6 +523,14 @@ export class RdvService {
       immatriculation: rdv.immatriculation,
     });
 
+    // Audit logging
+    await this.auditClient.logRdvStatusChange(
+      { tenant_id: tenantId, user_id: userId, centre_id: rdv.centre_id },
+      savedRdv.id,
+      'completed',
+      { resultat: dto.resultat, numero_pv: dto.numero_pv },
+    );
+
     return savedRdv;
   }
 
@@ -502,6 +554,13 @@ export class RdvService {
       client_id: rdv.client_id,
       client_telephone: rdv.client_telephone,
     });
+
+    // Audit logging
+    await this.auditClient.logRdvStatusChange(
+      { tenant_id: tenantId, user_id: userId, centre_id: rdv.centre_id },
+      savedRdv.id,
+      'no_show',
+    );
 
     return savedRdv;
   }

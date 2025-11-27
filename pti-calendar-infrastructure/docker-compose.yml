@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: pti_user,pti_planning,pti_rdv,pti_payment,pti_notification,pti_admin
+      POSTGRES_MULTIPLE_DATABASES: pti_user,pti_planning,pti_rdv,pti_payment,pti_notification,pti_admin,pti_audit
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh
@@ -304,6 +304,90 @@ services:
       DB_DATABASE: pti_admin
     ports:
       - "4005:4005"
+    networks:
+      - pti-network
+    restart: unless-stopped
+
+  audit-service:
+    build:
+      context: ../pti-calendar-audit-service
+      dockerfile: Dockerfile
+    container_name: pti-audit-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4006
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: pti_audit
+      KAFKA_BROKERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "4006:4006"
+    networks:
+      - pti-network
+    restart: unless-stopped
+
+  # ===== FRONTEND APPLICATIONS =====
+  client-pwa:
+    build:
+      context: ../pti-calendar-client-pwa
+      dockerfile: Dockerfile
+    container_name: pti-client-pwa
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://kong:8000
+    ports:
+      - "3000:3000"
+    networks:
+      - pti-network
+    restart: unless-stopped
+
+  pro-webapp:
+    build:
+      context: ../pti-calendar-pro-webapp
+      dockerfile: Dockerfile
+    container_name: pti-pro-webapp
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://kong:8000
+    ports:
+      - "3001:3000"
+    networks:
+      - pti-network
+    restart: unless-stopped
+
+  admin-webapp:
+    build:
+      context: ../pti-calendar-admin-webapp
+      dockerfile: Dockerfile
+    container_name: pti-admin-webapp
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://kong:8000
+    ports:
+      - "3002:3000"
+    networks:
+      - pti-network
+    restart: unless-stopped
+
+  callcenter-webapp:
+    build:
+      context: ../pti-calendar-callcenter-webapp
+      dockerfile: Dockerfile
+    container_name: pti-callcenter-webapp
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://kong:8000
+    ports:
+      - "3003:3000"
     networks:
       - pti-network
     restart: unless-stopped

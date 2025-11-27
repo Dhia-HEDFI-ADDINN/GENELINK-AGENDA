@@ -355,3 +355,11 @@ export function createApiClient(config: ApiClientConfig): PtiCalendarApiClient {
 
 // Default export
 export default PtiCalendarApiClient;
+
+// Re-export audit client
+export { AuditClient, getAuditClient } from './audit';
+export type { AuditEvent, AuditContext } from './audit';
+
+// Re-export React audit hook
+export { useAudit } from './hooks/useAudit';
+export type { UseAuditOptions, UseAuditResult } from './hooks/useAudit';

@@ -12,6 +12,7 @@ packages:
   - 'pti-calendar-payment-service'
   - 'pti-calendar-notification-service'
   - 'pti-calendar-admin-service'
+  - 'pti-calendar-audit-service'
 
   # Frontend applications
   - 'pti-calendar-client-pwa'

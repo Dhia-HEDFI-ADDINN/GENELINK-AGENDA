@@ -32,11 +32,10 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     { name: 'Tableau de bord', href: '/dashboard', icon: HomeIcon },
     { name: 'Réseaux', href: '/dashboard/reseaux', icon: GlobeAltIcon, adminOnly: true },
     { name: 'Centres', href: '/dashboard/centres', icon: BuildingOfficeIcon },
-    { name: 'Utilisateurs', href: '/dashboard/users', icon: UsersIcon },
-    { name: 'Tarification', href: '/dashboard/tarifs', icon: CurrencyEuroIcon },
-    { name: 'Rapports', href: '/dashboard/reports', icon: DocumentTextIcon },
-    { name: 'Statistiques', href: '/dashboard/stats', icon: ChartBarIcon },
-    { name: 'Notifications', href: '/dashboard/notifications', icon: BellIcon },
+    { name: 'Utilisateurs', href: '/dashboard/utilisateurs', icon: UsersIcon },
+    { name: 'Rapports', href: '/dashboard/rapports', icon: ChartBarIcon },
+    { name: 'Audit Trail', href: '/dashboard/audit', icon: DocumentTextIcon, adminOnly: true },
+    { name: 'Monitoring', href: '/dashboard/monitoring', icon: ServerStackIcon, superOnly: true },
     { name: 'Paramètres', href: '/dashboard/settings', icon: Cog6ToothIcon, superOnly: true },
   ];
 
@@ -146,6 +145,14 @@ function BellIcon({ className }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+    </svg>
+  );
+}
+
+function ServerStackIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z" />
     </svg>
   );
 }
