@@ -1,0 +1,98 @@
+# PTI Calendar - Prometheus Configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'pti-calendar-monitor'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # User Service
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['user-service:3001']
+    metrics_path: /api/v1/metrics
+    scrape_interval: 10s
+
+  # Planning Service
+  - job_name: 'planning-service'
+    static_configs:
+      - targets: ['planning-service:3002']
+    metrics_path: /api/v1/metrics
+    scrape_interval: 10s
+
+  # RDV Service
+  - job_name: 'rdv-service'
+    static_configs:
+      - targets: ['rdv-service:3003']
+    metrics_path: /api/v1/metrics
+    scrape_interval: 10s
+
+  # Payment Service
+  - job_name: 'payment-service'
+    static_configs:
+      - targets: ['payment-service:3004']
+    metrics_path: /api/v1/metrics
+    scrape_interval: 10s
+
+  # Notification Service
+  - job_name: 'notification-service'
+    static_configs:
+      - targets: ['notification-service:3005']
+    metrics_path: /api/v1/metrics
+    scrape_interval: 10s
+
+  # Admin Service
+  - job_name: 'admin-service'
+    static_configs:
+      - targets: ['admin-service:3006']
+    metrics_path: /api/v1/metrics
+    scrape_interval: 10s
+
+  # Audit Service
+  - job_name: 'audit-service'
+    static_configs:
+      - targets: ['audit-service:3007']
+    metrics_path: /api/v1/metrics
+    scrape_interval: 10s
+
+  # PostgreSQL Exporter
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # Redis Exporter
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # Kafka Exporter
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka-exporter:9308']
+
+  # Node Exporter (system metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Docker containers
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
