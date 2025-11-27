@@ -1,28 +1,85 @@
-# Angular specific
-/dist/
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
 /out-tsc/
 /tmp/
-/coverage/
-/e2e/test-output/
+
+# Environment files (contain secrets)
+.env
+**/.env
+.env.local
+.env.*.local
+
+# IDE and Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Angular specific
 /.angular/
 .angular/
-
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
-
-# Environment files
-/.env
-
-# Angular CLI and build artefacts
+/e2e/test-output/
 /.angular-cli.json
 /.ng/
 
+# Test coverage
+coverage/
+**/coverage/
+.nyc_output/
+
 # TypeScript cache
 *.tsbuildinfo
+.tsbuildinfo
 
 # Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+
+# Lock files (optionnel - décommenter si souhaité)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Docker volumes data (local dev)
+postgres_data/
+redis_data/
+pgadmin_data/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# NestJS specific
+.nest/
+
+# Python (si applicable)
+__pycache__/
+*.py[cod]
+.Python
+venv/
+.venv/
+
+# Secrets and certificates
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
