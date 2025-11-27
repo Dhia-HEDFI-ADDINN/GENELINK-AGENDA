@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: 59 130 246;
+    --color-secondary: 100 116 139;
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    --color-error: 239 68 68;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded hover:bg-gray-400;
+  }
+}
+
+@layer components {
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-xl shadow-card p-6;
+  }
+
+  .card-hover {
+    @apply card transition-shadow hover:shadow-soft;
+  }
+
+  /* Status badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-primary-100 text-primary-800;
+  }
+
+  .badge-success {
+    @apply bg-success-100 text-success-800;
+  }
+
+  .badge-warning {
+    @apply bg-warning-100 text-warning-800;
+  }
+
+  .badge-error {
+    @apply bg-error-100 text-error-800;
+  }
+
+  .badge-gray {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  /* RDV Status badges */
+  .badge-rdv-cree {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  .badge-rdv-confirme {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-rdv-rappele {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-rdv-en_cours {
+    @apply bg-purple-100 text-purple-800;
+  }
+
+  .badge-rdv-termine {
+    @apply bg-emerald-100 text-emerald-800;
+  }
+
+  .badge-rdv-annule {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .badge-rdv-no_show {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  /* Form styles */
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  .form-input {
+    @apply block w-full rounded-lg border-gray-300 shadow-sm
+           focus:border-primary-500 focus:ring-primary-500
+           disabled:bg-gray-100 disabled:cursor-not-allowed
+           text-sm;
+  }
+
+  .form-error {
+    @apply text-sm text-error-600 mt-1;
+  }
+
+  .form-hint {
+    @apply text-sm text-gray-500 mt-1;
+  }
+
+  /* Table styles */
+  .table-container {
+    @apply overflow-x-auto rounded-lg border border-gray-200;
+  }
+
+  .table {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+
+  .table-header {
+    @apply bg-gray-50;
+  }
+
+  .table-th {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+
+  .table-td {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+  }
+
+  .table-row {
+    @apply hover:bg-gray-50 transition-colors;
+  }
+
+  /* Time slot styles */
+  .time-slot {
+    @apply px-3 py-2 rounded-lg border text-center cursor-pointer transition-all;
+  }
+
+  .time-slot-available {
+    @apply border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100 hover:border-primary-300;
+  }
+
+  .time-slot-selected {
+    @apply border-primary-500 bg-primary-500 text-white;
+  }
+
+  .time-slot-unavailable {
+    @apply border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}

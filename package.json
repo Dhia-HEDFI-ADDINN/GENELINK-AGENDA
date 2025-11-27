@@ -1,0 +1,34 @@
+{
+  "name": "pti-calendar-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PTI Calendar Solution - Multi-tenant SaaS for SGS France vehicle inspection appointments",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "build:shared": "pnpm --filter @pti-calendar/shared-types build && pnpm --filter @pti-calendar/shared-utils build && pnpm --filter @pti-calendar/api-client build && pnpm --filter @pti-calendar/design-system build",
+    "build:services": "pnpm --filter '*-service' build",
+    "build:apps": "pnpm --filter '*-webapp' --filter '*-pwa' build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "type-check": "pnpm -r type-check",
+    "clean": "pnpm -r exec rm -rf node_modules dist .next .turbo",
+    "docker:build": "docker-compose -f pti-calendar-infrastructure/docker-compose.yml build",
+    "docker:up": "docker-compose -f pti-calendar-infrastructure/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f pti-calendar-infrastructure/docker-compose.yml down",
+    "docker:logs": "docker-compose -f pti-calendar-infrastructure/docker-compose.yml logs -f",
+    "dev:client": "pnpm --filter @pti-calendar/client-pwa dev",
+    "dev:pro": "pnpm --filter @pti-calendar/pro-webapp dev",
+    "dev:admin": "pnpm --filter @pti-calendar/admin-webapp dev",
+    "dev:callcenter": "pnpm --filter @pti-calendar/callcenter-webapp dev",
+    "dev:services": "pnpm --filter '*-service' --parallel dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.11.0"
+}
