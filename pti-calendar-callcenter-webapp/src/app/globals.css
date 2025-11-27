@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-gray-100 text-gray-900 antialiased; }
+}
+
+@layer components {
+  .callcenter-header {
+    @apply bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between;
+  }
+
+  .callcenter-search-panel {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  }
+
+  .callcenter-result-card {
+    @apply bg-white rounded-lg border border-gray-200 p-4 hover:border-primary-300 hover:shadow-md transition-all cursor-pointer;
+  }
+
+  .callcenter-action-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors;
+  }
+}

@@ -1,0 +1,20 @@
+packages:
+  # Shared packages
+  - 'pti-calendar-shared-types'
+  - 'pti-calendar-shared-utils'
+  - 'pti-calendar-api-client'
+  - 'pti-calendar-design-system'
+
+  # Backend services
+  - 'pti-calendar-user-service'
+  - 'pti-calendar-planning-service'
+  - 'pti-calendar-rdv-service'
+  - 'pti-calendar-payment-service'
+  - 'pti-calendar-notification-service'
+  - 'pti-calendar-admin-service'
+
+  # Frontend applications
+  - 'pti-calendar-client-pwa'
+  - 'pti-calendar-pro-webapp'
+  - 'pti-calendar-admin-webapp'
+  - 'pti-calendar-callcenter-webapp'
