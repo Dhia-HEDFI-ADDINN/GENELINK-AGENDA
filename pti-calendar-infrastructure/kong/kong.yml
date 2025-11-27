@@ -1,0 +1,126 @@
+_format_version: "3.0"
+
+services:
+  # User Service
+  - name: user-service
+    url: http://user-service:4000
+    routes:
+      - name: user-route
+        paths:
+          - /api/v1/user
+          - /api/v1/auth
+        strip_path: false
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - OPTIONS
+          headers:
+            - Content-Type
+            - Authorization
+            - x-tenant-id
+            - x-user-id
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
+
+  # Planning Service
+  - name: planning-service
+    url: http://planning-service:4001
+    routes:
+      - name: planning-route
+        paths:
+          - /api/v1/planning
+        strip_path: false
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 200
+          policy: local
+      - name: jwt
+        config:
+          key_claim_name: kid
+          claims_to_verify:
+            - exp
+
+  # RDV Service
+  - name: rdv-service
+    url: http://rdv-service:4002
+    routes:
+      - name: rdv-route
+        paths:
+          - /api/v1/rdv
+        strip_path: false
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 300
+          policy: local
+
+  # Payment Service
+  - name: payment-service
+    url: http://payment-service:4003
+    routes:
+      - name: payment-route
+        paths:
+          - /api/v1/payment
+        strip_path: false
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 50
+          policy: local
+
+  # Notification Service
+  - name: notification-service
+    url: http://notification-service:4004
+    routes:
+      - name: notification-route
+        paths:
+          - /api/v1/notification
+        strip_path: false
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
+
+  # Admin Service
+  - name: admin-service
+    url: http://admin-service:4005
+    routes:
+      - name: admin-route
+        paths:
+          - /api/v1/admin
+        strip_path: false
+    plugins:
+      - name: cors
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
+
+# Global plugins
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid
+      echo_downstream: true
+
+consumers:
+  - username: api-client
+    custom_id: pti-calendar-client

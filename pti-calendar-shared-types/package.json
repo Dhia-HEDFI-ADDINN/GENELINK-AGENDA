@@ -1,0 +1,29 @@
+{
+  "name": "@sgs-genilink/shared-types",
+  "version": "1.0.0",
+  "description": "Types TypeScript partagés pour PTI Calendar Solution",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "jest"
+  },
+  "keywords": [
+    "pti-calendar",
+    "types",
+    "typescript"
+  ],
+  "author": "NEXIUS/ADDINN Group",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  }
+}
