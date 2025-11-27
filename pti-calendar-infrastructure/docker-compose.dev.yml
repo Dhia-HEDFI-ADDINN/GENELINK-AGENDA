@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: pti_user,pti_planning,pti_rdv,pti_payment,pti_notification,pti_admin
+      POSTGRES_MULTIPLE_DATABASES: pti_user,pti_planning,pti_rdv,pti_payment,pti_notification,pti_admin,pti_audit
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
       - ./init-scripts/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh
