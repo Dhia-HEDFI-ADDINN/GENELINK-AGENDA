@@ -330,11 +330,12 @@ export const api = {
     valeur: number;
     nouveau_prix: number;
   }> => {
-    const response = await apiClient.post('/paiements/check-promo', { code, ...params });
+    const response = await apiClient.post<{
+      valid: boolean;
+      type_reduction: 'POURCENTAGE' | 'MONTANT_FIXE';
+      valeur: number;
+      nouveau_prix: number;
+    }>('/paiements/check-promo', { code, ...params });
     return response.data;
   },
 };
-
-// Export both the raw client and the typed API wrapper
-// Use apiClient for raw axios calls or api for typed methods
-export { api };

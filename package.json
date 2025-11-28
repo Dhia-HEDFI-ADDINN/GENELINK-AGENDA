@@ -41,6 +41,7 @@
     "dev:services": "pnpm --filter '*-service' --parallel dev"
   },
   "devDependencies": {
+    "@types/node": "^24.10.1",
     "typescript": "^5.3.2"
   },
   "engines": {

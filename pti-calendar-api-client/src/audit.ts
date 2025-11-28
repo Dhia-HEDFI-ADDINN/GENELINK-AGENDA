@@ -33,7 +33,7 @@ export interface AuditContext {
 class AuditClient {
   private context: AuditContext;
   private queue: AuditEvent[] = [];
-  private flushTimeout: NodeJS.Timeout | null = null;
+  private flushTimeout: ReturnType<typeof setTimeout> | null = null;
   private isEnabled: boolean = true;
   private batchSize: number = 10;
   private flushIntervalMs: number = 5000;

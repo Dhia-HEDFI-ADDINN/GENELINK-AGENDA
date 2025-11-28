@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { apiClient, Centre } from '@/lib/api-client';
+import { api, Centre } from '@/lib/api-client';
 
 interface Location {
   latitude: number;
@@ -56,7 +56,7 @@ export default function CentresPage() {
         params.search = searchQuery.trim();
       }
 
-      const result = await apiClient.searchCentres(params);
+      const result = await api.searchCentres(params);
       let sortedCentres = result.data || [];
 
       // Sort centres

@@ -128,6 +128,7 @@ export default function CallCenterPage() {
       date: string;
       heure_debut: string;
       heure_fin: string;
+      type_controle?: string;
       vehicule: { immatriculation: string; type_vehicule: string; type_carburant: string };
     }) => {
       const response = await api.post('/callcenter/rdv', data);
@@ -373,7 +374,16 @@ function NewRdvModal({
   centre: Centre | null;
   date: string;
   slot: { heure_debut: string; heure_fin: string } | null;
-  onSubmit: (data: unknown) => void;
+  onSubmit: (data: {
+    client_id?: string;
+    client: { civilite: string; nom: string; prenom: string; email: string; telephone: string };
+    centre_id: string;
+    date: string;
+    heure_debut: string;
+    heure_fin: string;
+    type_controle?: string;
+    vehicule: { immatriculation: string; type_vehicule: string; type_carburant: string };
+  }) => void;
   isSubmitting: boolean;
 }) {
   const [formData, setFormData] = useState({

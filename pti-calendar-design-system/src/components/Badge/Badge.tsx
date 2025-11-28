@@ -13,15 +13,18 @@ const badgeVariants = cva(
         success: 'bg-success-100 text-success-800',
         warning: 'bg-warning-100 text-warning-800',
         error: 'bg-error-100 text-error-800',
+        info: 'bg-blue-100 text-blue-800',
         // RDV Status
         cree: 'bg-blue-100 text-blue-800',
         confirme: 'bg-green-100 text-green-800',
         rappele: 'bg-yellow-100 text-yellow-800',
+        en_attente: 'bg-gray-100 text-gray-600',
         en_cours: 'bg-purple-100 text-purple-800',
         termine: 'bg-emerald-100 text-emerald-800',
         annule: 'bg-red-100 text-red-800',
         no_show: 'bg-gray-100 text-gray-600',
         reporte: 'bg-orange-100 text-orange-800',
+        valide: 'bg-green-100 text-green-800',
       },
       size: {
         sm: 'px-2 py-0.5 text-xs',

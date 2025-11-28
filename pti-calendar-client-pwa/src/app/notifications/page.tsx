@@ -44,8 +44,10 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     loadNotifications();
     checkPushPermission();
   }, []);
@@ -190,7 +192,7 @@ export default function NotificationsPage() {
       </header>
 
       {/* Push Notification Banner */}
-      {!pushEnabled && 'Notification' in window && (
+      {isMounted && !pushEnabled && typeof window !== 'undefined' && 'Notification' in window && (
         <div className="bg-blue-600 text-white px-4 py-3">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div className="flex items-center">

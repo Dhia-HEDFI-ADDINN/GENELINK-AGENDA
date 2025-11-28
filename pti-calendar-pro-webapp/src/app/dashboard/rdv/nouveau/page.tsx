@@ -137,7 +137,7 @@ export default function NouveauRdvPage() {
   // Create RDV mutation
   const createRdvMutation = useMutation({
     mutationFn: async (data: RdvFormData & { date: string; heure_debut: string; heure_fin: string; controleur_id?: string }) => {
-      const response = await apiClient.post('/rdv', {
+      const response = await apiClient.post<{ id: string }>('/rdv', {
         centre_id: centreId,
         date: data.date,
         heure_debut: data.heure_debut,
@@ -379,8 +379,8 @@ export default function NouveauRdvPage() {
               ) : disponibilites?.creneaux && disponibilites.creneaux.length > 0 ? (
                 <TimeSlotGrid
                   slots={disponibilites.creneaux}
-                  selectedSlot={selectedSlot || undefined}
-                  onSelectSlot={handleSlotSelect}
+                  selectedSlotId={selectedSlot?.id}
+                  onSelect={handleSlotSelect}
                 />
               ) : (
                 <div className="text-center py-8 text-gray-500">

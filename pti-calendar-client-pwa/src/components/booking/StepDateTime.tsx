@@ -155,8 +155,8 @@ export function StepDateTime() {
           ) : disponibilites?.creneaux && disponibilites.creneaux.length > 0 ? (
             <TimeSlotGrid
               slots={disponibilites.creneaux}
-              selectedSlot={selectedSlotLocal || undefined}
-              onSelectSlot={handleSlotSelect}
+              selectedSlotId={selectedSlotLocal?.id}
+              onSelect={handleSlotSelect}
             />
           ) : (
             <div className="text-center py-8">

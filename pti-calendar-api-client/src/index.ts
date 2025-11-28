@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
+import { AuditEvent, AuditContext, AuditClient, getAuditClient } from './audit';
 
 // Types
 export interface ApiClientConfig {
@@ -356,9 +357,8 @@ export function createApiClient(config: ApiClientConfig): PtiCalendarApiClient {
 // Default export
 export default PtiCalendarApiClient;
 
-// Re-export audit client
-export { AuditClient, getAuditClient } from './audit';
-export type { AuditEvent, AuditContext } from './audit';
+// Re-export audit client (already imported at top)
+export { AuditClient, getAuditClient, AuditEvent, AuditContext };
 
 // Re-export React audit hook
 export { useAudit } from './hooks/useAudit';

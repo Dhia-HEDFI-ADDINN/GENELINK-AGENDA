@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { format, parseISO, addDays, isBefore, isAfter } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { apiClient, Rdv, Centre, TimeSlot } from '@/lib/api-client';
+import { api, Rdv, Centre, TimeSlot } from '@/lib/api-client';
 
 export default function ModifierRdvPage() {
   const params = useParams();
@@ -30,7 +30,7 @@ export default function ModifierRdvPage() {
   const loadRdv = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.getRdv(params.id as string);
+      const data = await api.getRdv(params.id as string);
       setRdv(data);
 
       // Check if RDV can be modified
@@ -55,7 +55,7 @@ export default function ModifierRdvPage() {
       const dateDebut = format(addDays(today, 1), 'yyyy-MM-dd');
       const dateFin = format(addDays(today, 30), 'yyyy-MM-dd');
 
-      const result = await apiClient.getDatesDisponibles(centreId, {
+      const result = await api.getDatesDisponibles(centreId, {
         type_controle: typeControle,
         date_debut: dateDebut,
         date_fin: dateFin,
@@ -72,7 +72,7 @@ export default function ModifierRdvPage() {
 
     try {
       setLoadingSlots(true);
-      const result = await apiClient.getDisponibilites(rdv.centre.id, {
+      const result = await api.getDisponibilites(rdv.centre.id, {
         date,
         type_controle: rdv.type_controle,
         type_vehicule: rdv.vehicule.type_vehicule,
@@ -106,7 +106,7 @@ export default function ModifierRdvPage() {
     try {
       setSubmitting(true);
       // In production, this would call the API to update the RDV
-      // await apiClient.rescheduleRdv(rdv.id, {
+      // await api.rescheduleRdv(rdv.id, {
       //   nouvelle_date: selectedDate,
       //   nouvelle_heure: selectedSlot.heure_debut,
       // });

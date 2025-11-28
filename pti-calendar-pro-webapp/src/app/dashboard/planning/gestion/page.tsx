@@ -154,7 +154,7 @@ export default function GestionPlanningPage() {
       return null;
     });
 
-    const uniqueStatuts = [...new Set(statuts)];
+    const uniqueStatuts = Array.from(new Set(statuts));
     if (uniqueStatuts.length > 1) return 'mixed';
     return uniqueStatuts[0] as any;
   };

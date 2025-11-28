@@ -504,8 +504,8 @@ export default function NouveauRdvCallCenterPage() {
               ) : disponibilites?.creneaux && disponibilites.creneaux.length > 0 ? (
                 <TimeSlotGrid
                   slots={disponibilites.creneaux}
-                  selectedSlot={selectedSlot || undefined}
-                  onSelectSlot={handleSlotSelect}
+                  selectedSlotId={selectedSlot?.id}
+                  onSelect={handleSlotSelect}
                 />
               ) : (
                 <div className="text-center py-8 text-gray-500">

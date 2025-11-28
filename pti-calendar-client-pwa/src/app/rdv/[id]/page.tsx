@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { format, parseISO, isBefore, addHours } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { apiClient, Rdv } from '@/lib/api-client';
+import { api, Rdv } from '@/lib/api-client';
 
 type RdvStatus = 'CREE' | 'CONFIRME' | 'RAPPELE' | 'EN_COURS' | 'TERMINE' | 'ANNULE' | 'NO_SHOW' | 'REPORTE';
 
@@ -45,7 +45,7 @@ export default function RdvDetailPage() {
   const loadRdv = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.getRdv(params.id as string);
+      const data = await api.getRdv(params.id as string);
       setRdv(data);
     } catch (err: any) {
       setError(err.message || 'Erreur lors du chargement du RDV');
@@ -75,7 +75,7 @@ export default function RdvDetailPage() {
 
     try {
       setCancelling(true);
-      await apiClient.cancelRdv(rdv.id);
+      await api.cancelRdv(rdv.id);
       // Reload RDV to get updated status
       await loadRdv();
       setShowCancelModal(false);

@@ -119,9 +119,9 @@ export default function AuditPage() {
 
   // Export
   const exportMutation = useMutation({
-    mutationFn: async (format: 'csv' | 'json') => {
+    mutationFn: async (exportFormat: 'csv' | 'json') => {
       const response = await apiClient.post('/audit/export', {
-        format,
+        format: exportFormat,
         filters: {
           search: search || undefined,
           action_type: filterActionType || undefined,
@@ -132,11 +132,11 @@ export default function AuditPage() {
         },
       });
       // Download file
-      const blob = new Blob([response.data as any], { type: format === 'csv' ? 'text/csv' : 'application/json' });
+      const blob = new Blob([response.data as any], { type: exportFormat === 'csv' ? 'text/csv' : 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `audit_export_${format(new Date(), 'yyyyMMdd_HHmmss')}.${format}`;
+      a.download = `audit_export_${format(new Date(), 'yyyyMMdd_HHmmss')}.${exportFormat}`;
       a.click();
     },
   });

@@ -515,7 +515,7 @@ export default function MonitoringPage() {
                   <h4 className="font-medium mb-3">Requêtes HTTP</h4>
                   <div className="space-y-2">
                     <MetricRow label="Total requêtes/min" value={metrics?.total_requests || 0} unit="req/min" />
-                    <MetricRow label="Erreurs" value={metrics?.error_count || 0} unit="err/min" danger={metrics?.error_count && metrics.error_count > 10} />
+                    <MetricRow label="Erreurs" value={metrics?.error_count || 0} unit="err/min" danger={(metrics?.error_count ?? 0) > 10} />
                     <MetricRow label="Temps moyen" value={metrics?.avg_response_time || 0} unit="ms" />
                     <MetricRow label="Utilisateurs actifs" value={metrics?.active_users || 0} />
                     <MetricRow label="Connexions actives" value={metrics?.active_connections || 0} />
@@ -526,7 +526,7 @@ export default function MonitoringPage() {
                 <div>
                   <h4 className="font-medium mb-3">Cache & Base de données</h4>
                   <div className="space-y-2">
-                    <MetricRow label="Cache hit rate" value={metrics?.cache_hit_rate || 0} unit="%" good={metrics?.cache_hit_rate && metrics.cache_hit_rate > 80} />
+                    <MetricRow label="Cache hit rate" value={metrics?.cache_hit_rate || 0} unit="%" good={(metrics?.cache_hit_rate ?? 0) > 80} />
                     <MetricRow label="Connexions DB actives" value={metrics?.db_connections.active || 0} />
                     <MetricRow label="Connexions DB idle" value={metrics?.db_connections.idle || 0} />
                     <MetricRow label="Connexions DB max" value={metrics?.db_connections.max || 0} />
