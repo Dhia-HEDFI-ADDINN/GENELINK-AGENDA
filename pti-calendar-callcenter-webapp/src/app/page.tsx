@@ -314,8 +314,8 @@ export default function CallCenterPage() {
                       ) : slots?.creneaux && slots.creneaux.length > 0 ? (
                         <TimeSlotGrid
                           slots={slots.creneaux}
-                          selectedSlot={selectedSlot || undefined}
-                          onSelectSlot={(slot) => setSelectedSlot({ heure_debut: slot.heure_debut, heure_fin: slot.heure_fin })}
+                          selectedSlotId={selectedSlot?.heure_debut}
+                          onSelect={(slot) => setSelectedSlot({ heure_debut: slot.heure_debut, heure_fin: slot.heure_fin })}
                         />
                       ) : (
                         <p className="text-center py-8 text-gray-500">Aucun créneau disponible</p>

@@ -9,10 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@pti-calendar/design-system": "workspace:*",
-    "@pti-calendar/shared-types": "workspace:*",
-    "@pti-calendar/api-client": "workspace:*",
     "@hookform/resolvers": "^3.3.2",
+    "@pti-calendar/api-client": "workspace:*",
+    "@pti-calendar/design-system": "workspace:*",
+    "@sgs-genilink/shared-types": "workspace:*",
     "@tanstack/react-query": "^5.8.4",
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^20.10.0",
+    "@types/node": "^20.19.25",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",

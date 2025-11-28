@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RbacModule } from './rbac/rbac.module';
+import { AdminModule } from './admin/admin.module';
 
 // Middleware
 import { TenantMiddleware } from './shared/middlewares/tenant.middleware';
@@ -66,6 +67,7 @@ import kafkaConfig from './config/kafka.config';
     AuthModule,
     UsersModule,
     RbacModule,
+    AdminModule,
   ],
 })
 export class AppModule implements NestModule {

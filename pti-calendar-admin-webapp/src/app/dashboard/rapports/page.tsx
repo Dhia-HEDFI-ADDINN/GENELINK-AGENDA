@@ -14,10 +14,6 @@ import {
   Input,
   Select,
   Badge,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
   Spinner,
   Alert,
   ChartBarIcon,
@@ -29,6 +25,27 @@ import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
 } from '@pti-calendar/design-system';
+
+// Simple Tabs implementation
+function Tabs({ value, onValueChange, children }: { value: string; onValueChange: (v: string) => void; children: React.ReactNode }) {
+  return <div data-value={value} data-onchange={onValueChange ? 'true' : 'false'}>{children}</div>;
+}
+function TabsList({ children }: { children: React.ReactNode }) {
+  return <div className="flex border-b border-gray-200">{children}</div>;
+}
+function TabsTrigger({ value, children, ...props }: { value: string; children: React.ReactNode } & React.HTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      className="px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-primary-600 hover:border-primary-300"
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+function TabsContent({ value, children, className }: { value: string; children: React.ReactNode; className?: string }) {
+  return <div className={className}>{children}</div>;
+}
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,

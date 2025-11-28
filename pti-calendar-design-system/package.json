@@ -11,9 +11,13 @@
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./styles/globals.css": "./src/styles/globals.css",
+    "./tailwind.config.js": "./tailwind.config.js"
   },
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "tsup src/index.ts --format cjs,esm --dts --external react",
@@ -45,6 +49,8 @@
     "@storybook/blocks": "^7.6.10",
     "@storybook/react": "^7.6.10",
     "@storybook/react-vite": "^7.6.10",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.17",
@@ -57,7 +63,10 @@
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "publishConfig": {
     "access": "public"
   }

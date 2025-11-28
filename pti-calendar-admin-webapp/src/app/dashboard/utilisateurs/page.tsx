@@ -16,10 +16,6 @@ import {
   Badge,
   Modal,
   ModalFooter,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
   Spinner,
   Alert,
   UsersIcon,
@@ -34,6 +30,27 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from '@pti-calendar/design-system';
+
+// Simple Tabs implementation
+function Tabs({ value, onValueChange, children }: { value: string; onValueChange: (v: string) => void; children: React.ReactNode }) {
+  return <div data-value={value} data-onchange={onValueChange ? 'true' : 'false'}>{children}</div>;
+}
+function TabsList({ children }: { children: React.ReactNode }) {
+  return <div className="flex border-b border-gray-200 mb-4">{children}</div>;
+}
+function TabsTrigger({ value, children, ...props }: { value: string; children: React.ReactNode } & React.HTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-primary-600 hover:border-primary-300 data-[state=active]:text-primary-600 data-[state=active]:border-primary-600"
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+function TabsContent({ value, children, className }: { value: string; children: React.ReactNode; className?: string }) {
+  return <div className={className}>{children}</div>;
+}
 
 interface User {
   id: string;
@@ -182,7 +199,7 @@ export default function UtilisateursPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Gestion des utilisateurs</h1>
           <p className="text-gray-500 mt-1">
-            {users?.meta.total || 0} utilisateurs • {roles?.length || 0} rôles
+            {users?.meta?.total || users?.data?.length || 0} utilisateurs • {roles?.length || 0} rôles
           </p>
         </div>
       </div>

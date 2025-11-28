@@ -19,7 +19,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@pti-calendar/shared-types": "workspace:*",
+    "@sgs-genilink/shared-types": "workspace:*",
     "axios": "^1.6.2"
   },
   "devDependencies": {

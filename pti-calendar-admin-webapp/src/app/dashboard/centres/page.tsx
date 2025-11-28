@@ -106,7 +106,7 @@ export default function CentresPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Centres</h1>
-          <p className="text-gray-500 mt-1">{centres?.meta.total || 0} centres</p>
+          <p className="text-gray-500 mt-1">{centres?.meta?.total || centres?.data?.length || 0} centres</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)}>
           <PlusIcon className="h-5 w-5 mr-2" />

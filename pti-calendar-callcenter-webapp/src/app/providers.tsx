@@ -56,7 +56,7 @@ export function Providers({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post(`${API_URL}/auth/callcenter/login`, { email, password });
+    const response = await axios.post(`${API_URL}/auth/login`, { email, password });
     const { access_token, user: userData } = response.data;
     Cookies.set('pti_cc_token', access_token, { expires: 1 });
     setUser(userData);

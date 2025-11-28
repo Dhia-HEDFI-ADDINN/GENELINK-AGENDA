@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       access_token: string;
       refresh_token: string;
       user: AdminUser;
-    }>('/auth/admin/login', { email, password });
+    }>('/auth/login', { email, password });
 
     const { access_token, refresh_token, user: userData } = response.data;
 

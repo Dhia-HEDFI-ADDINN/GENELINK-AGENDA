@@ -5,8 +5,8 @@ packages:
   - 'pti-calendar-api-client'
   - 'pti-calendar-design-system'
 
-  # Backend services
-  - 'pti-calendar-user-service'
+  # Backend services (user-service uses npm, excluded from pnpm workspace)
+  # - 'pti-calendar-user-service'
   - 'pti-calendar-planning-service'
   - 'pti-calendar-rdv-service'
   - 'pti-calendar-payment-service'

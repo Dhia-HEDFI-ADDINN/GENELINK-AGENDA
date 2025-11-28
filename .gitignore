@@ -83,3 +83,6 @@ venv/
 *.crt
 *.p12
 secrets/
+
+/.next/
+.next/
