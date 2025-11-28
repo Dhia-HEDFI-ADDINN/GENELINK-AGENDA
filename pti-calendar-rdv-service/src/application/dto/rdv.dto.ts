@@ -287,6 +287,16 @@ export class SearchRdvDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @IsEmail()
+  client_email?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  reference?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsUUID()
   controleur_id?: string;
 

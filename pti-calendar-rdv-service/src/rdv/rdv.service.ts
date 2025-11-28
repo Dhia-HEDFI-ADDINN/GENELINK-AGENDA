@@ -208,6 +208,14 @@ export class RdvService {
       whereClause.client_nom = Like(`%${query.client_nom}%`);
     }
 
+    if ((query as any).client_email) {
+      whereClause.client_email = Like(`%${(query as any).client_email}%`);
+    }
+
+    if ((query as any).reference) {
+      whereClause.reference = (query as any).reference;
+    }
+
     const [items, total] = await this.rdvRepository.findAndCount({
       where: whereClause,
       order: { date: 'ASC', heure_debut: 'ASC' },

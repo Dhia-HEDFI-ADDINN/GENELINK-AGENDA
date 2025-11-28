@@ -295,4 +295,76 @@ export class DisponibilitesService {
     const m = minutes % 60;
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
+
+  /**
+   * Public interface pour le controller
+   */
+  async getDisponibilites(params: {
+    centre_id: string;
+    tenant_id: string;
+    date: string;
+    type_controle: string;
+    type_vehicule?: string;
+    carburant?: string;
+  }): Promise<DisponibilitesResponse> {
+    return this.calculerDisponibilites(
+      {
+        centre_id: params.centre_id,
+        date: params.date,
+        type_controle: params.type_controle,
+        type_vehicule: params.type_vehicule || 'VL',
+        carburant: params.carburant || 'essence',
+      },
+      params.tenant_id,
+    );
+  }
+
+  /**
+   * Obtenir les dates avec au moins un créneau disponible
+   */
+  async getDatesDisponibles(params: {
+    centre_id: string;
+    tenant_id: string;
+    date_debut: string;
+    date_fin: string;
+    type_controle: string;
+    type_vehicule?: string;
+    carburant?: string;
+  }): Promise<string[]> {
+    const dates: string[] = [];
+    const startDate = new Date(params.date_debut);
+    const endDate = new Date(params.date_fin);
+
+    // Limiter à 60 jours max
+    const maxDays = 60;
+    const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    const daysToCheck = Math.min(daysDiff, maxDays);
+
+    for (let i = 0; i <= daysToCheck; i++) {
+      const checkDate = new Date(startDate);
+      checkDate.setDate(startDate.getDate() + i);
+      const dateStr = checkDate.toISOString().split('T')[0];
+
+      try {
+        const disponibilites = await this.calculerDisponibilites(
+          {
+            centre_id: params.centre_id,
+            date: dateStr,
+            type_controle: params.type_controle,
+            type_vehicule: params.type_vehicule || 'VL',
+            carburant: params.carburant || 'essence',
+          },
+          params.tenant_id,
+        );
+
+        if (disponibilites.nb_creneaux > 0) {
+          dates.push(dateStr);
+        }
+      } catch {
+        // Skip dates with errors
+      }
+    }
+
+    return dates;
+  }
 }
