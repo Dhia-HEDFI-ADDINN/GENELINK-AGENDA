@@ -63,6 +63,51 @@ export class RdvController {
     return this.rdvService.search(query, tenantId);
   }
 
+  @Get('mes-rdv')
+  @ApiOperation({ summary: 'Rechercher mes RDV par email/téléphone/référence' })
+  @ApiQuery({ name: 'email', required: false })
+  @ApiQuery({ name: 'telephone', required: false })
+  @ApiQuery({ name: 'reference', required: false })
+  @ApiResponse({ status: 200, description: 'Liste des RDV du client' })
+  async getMesRdv(
+    @Query('email') email?: string,
+    @Query('telephone') telephone?: string,
+    @Query('reference') reference?: string,
+    @Headers('x-tenant-id') tenantId?: string,
+  ) {
+    const query: SearchRdvDto = {};
+    if (email) query.client_email = email;
+    if (telephone) query.client_telephone = telephone;
+    if (reference) query.reference = reference;
+    query.limit = 50;
+
+    return this.rdvService.search(query, tenantId || 'default');
+  }
+
+  @Post('create-with-payment')
+  @ApiOperation({ summary: 'Créer un RDV avec intention de paiement' })
+  @ApiResponse({ status: 201, description: 'RDV créé avec payment intent' })
+  @HttpCode(HttpStatus.CREATED)
+  async createWithPayment(
+    @Body() dto: CreateRdvDto,
+    @Headers('x-tenant-id') tenantId: string,
+    @Headers('x-user-id') userId?: string,
+  ) {
+    // Create the RDV
+    const rdv = await this.rdvService.create(dto, tenantId || 'default', userId);
+
+    // In a real implementation, we would create a Stripe PaymentIntent here
+    // For now, return a mock response
+    return {
+      rdv_id: rdv.id,
+      client_secret: `pi_${rdv.id.substring(0, 8)}_secret_mock`,
+      payment_intent_id: `pi_${rdv.id.substring(0, 8)}`,
+      prix_base: rdv.prix_ht || 6250,
+      prix_total: rdv.prix_ttc || 7500,
+      reduction: 0,
+    };
+  }
+
   @Get('stats')
   @ApiOperation({ summary: 'Obtenir les statistiques des RDV pour un centre' })
   @ApiQuery({ name: 'centre_id', required: true })
