@@ -363,3 +363,429 @@ export type { AuditEvent, AuditContext } from './audit';
 // Re-export React audit hook
 export { useAudit } from './hooks/useAudit';
 export type { UseAuditOptions, UseAuditResult } from './hooks/useAudit';
+
+// ============================================
+// Extended Types for Pro/Admin/CallCenter
+// ============================================
+
+export interface DashboardStats {
+  rdv_aujourd_hui: number;
+  rdv_en_attente: number;
+  rdv_termines: number;
+  rdv_annules: number;
+  taux_occupation: number;
+  no_shows: number;
+  prochains_rdv: Rdv[];
+}
+
+export interface Controleur {
+  id: string;
+  user_id: string;
+  centre_id: string;
+  nom: string;
+  prenom: string;
+  initiales: string;
+  email: string;
+  telephone: string;
+  agrements: string[];
+  actif: boolean;
+  created_at: string;
+}
+
+export interface Planning {
+  id: string;
+  centre_id: string;
+  date: string;
+  ferme: boolean;
+  motif_fermeture?: string;
+  controleurs: PlanningControleur[];
+}
+
+export interface PlanningControleur {
+  controleur_id: string;
+  controleur_nom: string;
+  controleur_prenom: string;
+  initiales: string;
+  agrements?: string[];
+  plages: PlageHoraire[];
+}
+
+export interface PlageHoraire {
+  ouverture: string;
+  fermeture: string;
+  pause_debut?: string;
+  pause_fin?: string;
+}
+
+export interface Reseau {
+  id: string;
+  code: string;
+  nom: string;
+  tenant_id: string;
+  nb_centres: number;
+  actif: boolean;
+}
+
+export interface Tarif {
+  id: string;
+  centre_id: string;
+  type_controle: string;
+  type_vehicule: string;
+  prix_ht: number;
+  prix_ttc: number;
+  tva: number;
+  actif: boolean;
+}
+
+export interface CodePromo {
+  id: string;
+  code: string;
+  type_reduction: 'POURCENTAGE' | 'MONTANT_FIXE';
+  valeur: number;
+  date_debut: string;
+  date_fin: string;
+  utilisations_max: number;
+  utilisations_actuelles: number;
+  actif: boolean;
+}
+
+export interface UserAdmin {
+  id: string;
+  email: string;
+  nom: string;
+  prenom: string;
+  role: string;
+  centre_id?: string;
+  centre_nom?: string;
+  reseau_id?: string;
+  reseau_nom?: string;
+  actif: boolean;
+  last_login?: string;
+  created_at: string;
+}
+
+export interface CallCenterStats {
+  today: {
+    appels_total: number;
+    rdv_crees: number;
+    rdv_modifies: number;
+    rdv_annules: number;
+    temps_moyen_appel: number;
+    taux_conversion: number;
+  };
+  rappels_en_attente: number;
+  rdv_a_confirmer: number;
+  rdv_proches: RdvProche[];
+  historique_appels: HistoriqueAppel[];
+  performance: Performance;
+}
+
+export interface RdvProche {
+  id: string;
+  client_nom: string;
+  client_telephone: string;
+  centre_nom: string;
+  date: string;
+  heure: string;
+  statut: string;
+}
+
+export interface HistoriqueAppel {
+  date: string;
+  appels: number;
+  rdv_crees: number;
+}
+
+export interface Performance {
+  rang: number;
+  total_agents: number;
+  rdv_semaine: number;
+  objectif_semaine: number;
+}
+
+export interface Rappel {
+  id: string;
+  client_id: string;
+  client_nom: string;
+  client_telephone: string;
+  client_email: string;
+  motif: string;
+  date_rappel: string;
+  heure_rappel: string;
+  priorite: 'HAUTE' | 'NORMALE' | 'BASSE';
+  statut: 'EN_ATTENTE' | 'EFFECTUE' | 'ANNULE';
+  notes?: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface Script {
+  id: string;
+  titre: string;
+  type: 'ACCUEIL' | 'RDV' | 'CONFIRMATION' | 'ANNULATION' | 'RECLAMATION';
+  contenu: string;
+  variables: string[];
+  actif: boolean;
+}
+
+// ============================================
+// Extended API Methods
+// ============================================
+
+// Pro WebApp Methods
+export const proApi = {
+  // Dashboard
+  getDashboardStats: async (client: PtiCalendarApiClient, date: string) => {
+    return client.get<DashboardStats>('/dashboard/stats', { params: { date } });
+  },
+
+  // RDV Management
+  getRdvList: async (
+    client: PtiCalendarApiClient,
+    params: {
+      date?: string;
+      statut?: string;
+      controleur_id?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    }
+  ) => {
+    return client.get<PaginatedResponse<Rdv>>('/rdv', { params });
+  },
+
+  getRdvById: async (client: PtiCalendarApiClient, id: string) => {
+    return client.get<Rdv>(`/rdv/${id}`);
+  },
+
+  createRdv: async (client: PtiCalendarApiClient, data: CreateRdvRequest) => {
+    return client.post<Rdv>('/rdv', data);
+  },
+
+  updateRdv: async (client: PtiCalendarApiClient, id: string, data: Partial<CreateRdvRequest>) => {
+    return client.put<Rdv>(`/rdv/${id}`, data);
+  },
+
+  checkinRdv: async (client: PtiCalendarApiClient, id: string) => {
+    return client.post<Rdv>(`/rdv/${id}/checkin`);
+  },
+
+  startRdv: async (client: PtiCalendarApiClient, id: string) => {
+    return client.post<Rdv>(`/rdv/${id}/demarrer`);
+  },
+
+  completeRdv: async (
+    client: PtiCalendarApiClient,
+    id: string,
+    data: { resultat: 'A' | 'S' | 'R'; defauts?: string[]; observations?: string }
+  ) => {
+    return client.post<Rdv>(`/rdv/${id}/terminer`, data);
+  },
+
+  markNoShow: async (client: PtiCalendarApiClient, id: string) => {
+    return client.post<Rdv>(`/rdv/${id}/no-show`);
+  },
+
+  cancelRdv: async (client: PtiCalendarApiClient, id: string, motif: string) => {
+    return client.post<Rdv>(`/rdv/${id}/annuler`, { motif });
+  },
+
+  // Planning
+  getPlanning: async (client: PtiCalendarApiClient, centreId: string, date: string) => {
+    return client.get<Planning>(`/planning/${centreId}/${date}`);
+  },
+
+  updatePlanning: async (client: PtiCalendarApiClient, centreId: string, date: string, data: Partial<Planning>) => {
+    return client.put<Planning>(`/planning/${centreId}/${date}`, data);
+  },
+
+  // Controleurs
+  getControleurs: async (client: PtiCalendarApiClient, centreId: string) => {
+    return client.get<Controleur[]>(`/centres/${centreId}/controleurs`);
+  },
+};
+
+// Admin WebApp Methods
+export const adminApi = {
+  // Centres
+  getCentres: async (
+    client: PtiCalendarApiClient,
+    params?: { search?: string; reseau_id?: string; actif?: boolean }
+  ) => {
+    return client.get<PaginatedResponse<Centre>>('/admin/centres', { params });
+  },
+
+  getCentre: async (client: PtiCalendarApiClient, id: string) => {
+    return client.get<Centre>(`/admin/centres/${id}`);
+  },
+
+  createCentre: async (client: PtiCalendarApiClient, data: Partial<Centre>) => {
+    return client.post<Centre>('/admin/centres', data);
+  },
+
+  updateCentre: async (client: PtiCalendarApiClient, id: string, data: Partial<Centre>) => {
+    return client.put<Centre>(`/admin/centres/${id}`, data);
+  },
+
+  deleteCentre: async (client: PtiCalendarApiClient, id: string) => {
+    return client.delete(`/admin/centres/${id}`);
+  },
+
+  // Reseaux
+  getReseaux: async (client: PtiCalendarApiClient) => {
+    return client.get<PaginatedResponse<Reseau>>('/admin/reseaux');
+  },
+
+  createReseau: async (client: PtiCalendarApiClient, data: Partial<Reseau>) => {
+    return client.post<Reseau>('/admin/reseaux', data);
+  },
+
+  updateReseau: async (client: PtiCalendarApiClient, id: string, data: Partial<Reseau>) => {
+    return client.put<Reseau>(`/admin/reseaux/${id}`, data);
+  },
+
+  // Users
+  getUsers: async (
+    client: PtiCalendarApiClient,
+    params?: { search?: string; role?: string; centre_id?: string; actif?: boolean }
+  ) => {
+    return client.get<PaginatedResponse<UserAdmin>>('/admin/users', { params });
+  },
+
+  getUser: async (client: PtiCalendarApiClient, id: string) => {
+    return client.get<UserAdmin>(`/admin/users/${id}`);
+  },
+
+  createUser: async (client: PtiCalendarApiClient, data: Partial<UserAdmin> & { password: string }) => {
+    return client.post<UserAdmin>('/admin/users', data);
+  },
+
+  updateUser: async (client: PtiCalendarApiClient, id: string, data: Partial<UserAdmin>) => {
+    return client.put<UserAdmin>(`/admin/users/${id}`, data);
+  },
+
+  deleteUser: async (client: PtiCalendarApiClient, id: string) => {
+    return client.delete(`/admin/users/${id}`);
+  },
+
+  resetUserPassword: async (client: PtiCalendarApiClient, id: string) => {
+    return client.post<{ temporary_password: string }>(`/admin/users/${id}/reset-password`);
+  },
+
+  // Tarifs
+  getTarifs: async (client: PtiCalendarApiClient, centreId: string) => {
+    return client.get<Tarif[]>(`/admin/centres/${centreId}/tarifs`);
+  },
+
+  updateTarifs: async (client: PtiCalendarApiClient, centreId: string, tarifs: Partial<Tarif>[]) => {
+    return client.put<Tarif[]>(`/admin/centres/${centreId}/tarifs`, { tarifs });
+  },
+
+  // Codes Promo
+  getCodesPromo: async (client: PtiCalendarApiClient) => {
+    return client.get<CodePromo[]>('/admin/codes-promo');
+  },
+
+  createCodePromo: async (client: PtiCalendarApiClient, data: Partial<CodePromo>) => {
+    return client.post<CodePromo>('/admin/codes-promo', data);
+  },
+
+  updateCodePromo: async (client: PtiCalendarApiClient, id: string, data: Partial<CodePromo>) => {
+    return client.put<CodePromo>(`/admin/codes-promo/${id}`, data);
+  },
+
+  deleteCodePromo: async (client: PtiCalendarApiClient, id: string) => {
+    return client.delete(`/admin/codes-promo/${id}`);
+  },
+
+  // Audit
+  getAuditLogs: async (
+    client: PtiCalendarApiClient,
+    params: { date_debut: string; date_fin: string; action?: string; user_id?: string }
+  ) => {
+    return client.get<PaginatedResponse<AuditEvent>>('/admin/audit', { params });
+  },
+
+  // Reports
+  getReport: async (
+    client: PtiCalendarApiClient,
+    type: 'rdv' | 'ca' | 'performance',
+    params: { date_debut: string; date_fin: string; centre_id?: string }
+  ) => {
+    return client.get(`/admin/reports/${type}`, { params });
+  },
+};
+
+// CallCenter WebApp Methods
+export const callcenterApi = {
+  // Stats
+  getStats: async (client: PtiCalendarApiClient) => {
+    return client.get<CallCenterStats>('/callcenter/stats');
+  },
+
+  // Client Search
+  searchClients: async (
+    client: PtiCalendarApiClient,
+    params: { telephone?: string; email?: string; nom?: string; immatriculation?: string }
+  ) => {
+    return client.get<PaginatedResponse<Client>>('/callcenter/clients', { params });
+  },
+
+  getClientHistory: async (client: PtiCalendarApiClient, clientId: string) => {
+    return client.get<Rdv[]>(`/callcenter/clients/${clientId}/historique`);
+  },
+
+  // Rappels
+  getRappels: async (client: PtiCalendarApiClient, params?: { date?: string; statut?: string }) => {
+    return client.get<Rappel[]>('/callcenter/rappels', { params });
+  },
+
+  createRappel: async (client: PtiCalendarApiClient, data: Partial<Rappel>) => {
+    return client.post<Rappel>('/callcenter/rappels', data);
+  },
+
+  updateRappel: async (client: PtiCalendarApiClient, id: string, data: Partial<Rappel>) => {
+    return client.put<Rappel>(`/callcenter/rappels/${id}`, data);
+  },
+
+  completeRappel: async (client: PtiCalendarApiClient, id: string, notes?: string) => {
+    return client.post<Rappel>(`/callcenter/rappels/${id}/complete`, { notes });
+  },
+
+  // Confirmations
+  getRdvAConfirmer: async (client: PtiCalendarApiClient, date: string) => {
+    return client.get<Rdv[]>('/callcenter/confirmations', { params: { date } });
+  },
+
+  confirmerRdv: async (client: PtiCalendarApiClient, rdvId: string) => {
+    return client.post<Rdv>(`/callcenter/confirmations/${rdvId}/confirmer`);
+  },
+
+  // Scripts
+  getScripts: async (client: PtiCalendarApiClient, type?: string) => {
+    return client.get<Script[]>('/callcenter/scripts', { params: { type } });
+  },
+
+  // RDV Creation (simplified for phone)
+  createRdvByPhone: async (
+    client: PtiCalendarApiClient,
+    data: CreateRdvRequest & { source: 'CALLCENTER' }
+  ) => {
+    return client.post<Rdv>('/callcenter/rdv', data);
+  },
+
+  // Log call
+  logCall: async (
+    client: PtiCalendarApiClient,
+    data: {
+      client_telephone: string;
+      duree_secondes: number;
+      type: 'ENTRANT' | 'SORTANT';
+      resultat: 'RDV_CREE' | 'RDV_MODIFIE' | 'RDV_ANNULE' | 'INFO' | 'RAPPEL' | 'ABSENT';
+      rdv_id?: string;
+      notes?: string;
+    }
+  ) => {
+    return client.post('/callcenter/appels', data);
+  },
+};
